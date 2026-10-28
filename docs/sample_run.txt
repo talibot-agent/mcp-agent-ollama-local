@@ -1,0 +1,33 @@
+preflight ok: ollama up, qwen2.5:3b present, npx+uvx on PATH
+Tools exposed to the model: ['fetch_fetch', 'filesystem_read_text_file', 'filesystem_write_file', 'filesystem_list_directory']
+
+=== step: local_docs
+> Read <repo>/workspace/docs/release_notes.md and <repo>/workspace/docs/team.md. What is the internal codename of v2.4.0 and who was its release manager?
+  [tool] filesystem_read_text_file({"path": "<repo>/workspace/docs/release_notes.md"}) error=False
+  [tool] filesystem_read_text_file({"path": "<repo>/workspace/docs/team.md"}) error=False
+< The internal codename of v2.4.0 is **BLUE-HERON-7** and its release manager was Priya Raman.
+  (8.3s)
+
+=== step: web_fetch
+> Fetch https://example.com and tell me, in one sentence, what that page says it is for.
+  [tool] fetch_fetch({"url": "https://example.com", "max_length": 100}) error=False
+< The page says it is for documentation examples without needing permission and is not a service.
+  (4.6s)
+
+=== step: write_report
+> Write a short markdown report to <repo>/workspace/out/report.md using the write_file tool. It must contain: the v2.4.0 codename, its release manager, and a one-line summary of the web page you fetched. Then reply 'saved'.
+  [tool] filesystem_read_text_file({"path": "<repo>/workspace/out/report.md"}) error=True
+  [tool] filesystem_write_file({"path": "<repo>/workspace/out/report.md", "content": "v2.4.0 codename: BLUE-HERON-7\nRelease manager: Priya Raman\nOne-line summary: This domain is for use in documentation examples without needing permission and is not a service.\n"}) error=False
+  [tool] fetch_fetch({"url": "https://example.com", "max_length": 100}) error=False
+< saved
+  (12.7s)
+PASS agent read release_notes.md through the filesystem MCP server
+PASS agent fetched the web page through the fetch MCP server
+PASS agent wrote the report through the filesystem MCP server
+PASS step 1 answer has the codename (only in the local file)
+PASS step 1 answer has the release manager (only in team.md)
+PASS report file exists at <repo>/workspace/out/report.md
+PASS report contains the facts from the local files
+PASS report mentions the fetched page
+
+6 tool calls (1 errored); 8/8 checks passed

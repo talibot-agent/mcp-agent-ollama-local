@@ -1,0 +1,6 @@
+# Only needed if `ollama pull qwen2.5:3b` is blocked (e.g. behind a proxy).
+# 1) Download qwen2.5-3b-instruct-q4_k_m.gguf from
+#    https://huggingface.co/Qwen/Qwen2.5-3B-Instruct-GGUF
+# 2) ollama create qwen2.5:3b -f Modelfile.example
+FROM ./qwen2.5-3b-instruct-q4_k_m.gguf
+PARAMETER num_ctx 8192

@@ -1,0 +1,27 @@
+# mcp-agent config: 100% local. Ollama serves an OpenAI-compatible API on :11434.
+execution_engine: asyncio
+
+logger:
+  transports: [file]
+  level: info
+  path: "logs/mcp-agent.jsonl"
+
+mcp:
+  servers:
+    filesystem:
+      # Pinned Node MCP server. The allowed directory is appended at runtime (./workspace).
+      command: "npx"
+      args: ["-y", "@modelcontextprotocol/server-filesystem@2026.8.31"]
+      # Small models pick tools better from a short menu: expose only 3 of the 14 tools.
+      allowed_tools: ["read_text_file", "list_directory", "write_file"]
+    fetch:
+      # Pinned Python MCP server, run via uvx.
+      command: "uvx"
+      args: ["mcp-server-fetch==2026.10.24"]
+      allowed_tools: ["fetch"]
+
+openai:
+  # Ollama ignores the key, but the OpenAI client requires a non-empty string.
+  base_url: "http://localhost:11434/v1"
+  api_key: "ollama"
+  default_model: "qwen2.5:3b"
